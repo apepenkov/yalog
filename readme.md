@@ -30,7 +30,7 @@ go get github.com/apepenkov/yalog
 ### Basic Setup
 
 ```go
-import "github.com/yourusername/yalog"
+import "github.com/apepenkov/yalog"
 
 func main() {
     logger := yalog.NewLogger("myLogger")
