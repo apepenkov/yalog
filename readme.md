@@ -10,6 +10,11 @@ YALog is a versatile and customizable logging package for Go, designed to provid
 - **Customizable Options**: Various options to tailor the logger to specific needs, such as adjusting caller padding, time formatting, and more.
 - **Hierarchical Logging**: Support for hierarchical loggers with inheritance of settings and automatic name tree adjustment.
 
+Example:
+
+![image](https://github.com/apepenkov/yalog/assets/39992738/a1849e6a-0441-4088-a535-2b498245eefa)
+
+
 ## Installation
 
 To install YALog, use the `go get` command:
