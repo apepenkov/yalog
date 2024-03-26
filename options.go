@@ -1,5 +1,7 @@
 package yalog
 
+import "io"
+
 type Option func(*Logger)
 
 // WithVerboseLevel
@@ -62,5 +64,24 @@ func WithPrintTreeName(pad int, autoAdjust bool) Option {
 		l.printNameTree = true
 		l.padNameChars = pad
 		l.autoAdjustPadNameChars = autoAdjust
+	}
+}
+
+// WithDifferentOutput
+// sets a different output for the logger
+// w: the writer to output to
+func WithDifferentOutput(w io.Writer) Option {
+	return func(l *Logger) {
+		l.output = w
+	}
+}
+
+// WithSecondOutput
+// sets a second output for the logger
+// level: the minimum level to output to the second output
+func WithSecondOutput(w io.Writer, level VerboseLevel) Option {
+	return func(l *Logger) {
+		l.secondOutput = w
+		l.secondOutputMinLevel = level
 	}
 }

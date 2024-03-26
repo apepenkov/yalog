@@ -1,6 +1,7 @@
 package yalog
 
 import (
+	"os"
 	"testing"
 )
 
@@ -15,6 +16,8 @@ func TestLogger(t *testing.T) {
 		WithAnotherColor(VerboseLevelDebug, ColorBrightBlack),
 		WithAnotherColor(VerboseLevelInfo, ColorCyan),
 		WithPrintTreeName(1, true),
+		WithDifferentOutput(os.Stderr),
+		WithSecondOutput(os.Stdout, VerboseLevelInfo),
 	)
 
 	logger01 := logger0.NewLogger(

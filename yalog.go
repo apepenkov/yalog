@@ -2,6 +2,7 @@ package yalog
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -90,6 +91,10 @@ type Logger struct {
 	doColor                bool
 	printNameTree          bool
 
+	output               io.Writer
+	secondOutput         io.Writer
+	secondOutputMinLevel VerboseLevel
+
 	levelColors []Color
 }
 
@@ -107,12 +112,23 @@ func NewLogger(name string, options ...Option) *Logger {
 		doColor:       false,
 		printNameTree: false,
 		levelColors:   make([]Color, levelCount),
+
+		output: os.Stdout,
 	}
 	copy(l.levelColors, defaultColorCodes)
 	for _, option := range options {
 		option(l)
 	}
 	return l
+}
+
+func (l *Logger) SetOutput(w io.Writer) {
+	l.output = w
+}
+
+func (l *Logger) SetSecondOutput(w io.Writer, minLevel VerboseLevel) {
+	l.secondOutput = w
+	l.secondOutputMinLevel = minLevel
 }
 
 func (l *Logger) RecursiveAddChild(another *Logger) {
@@ -159,6 +175,10 @@ func (l *Logger) NewLogger(name string, options ...Option) *Logger {
 		doColor:                l.doColor,
 		printNameTree:          l.printNameTree,
 		levelColors:            make([]Color, levelCount),
+
+		output:               l.output,
+		secondOutput:         l.secondOutput,
+		secondOutputMinLevel: l.secondOutputMinLevel,
 	}
 	copy(newl.levelColors, l.levelColors)
 	for _, option := range options {
@@ -238,7 +258,11 @@ func (l *Logger) print(level VerboseLevel, doNewLine bool, args ...any) {
 		res = string(l.levelColors[level]) + res + string(ColorReset)
 	}
 
-	print(res)
+	if l.secondOutput != nil && level >= l.secondOutputMinLevel {
+		l.secondOutput.Write([]byte(res))
+	} else {
+		l.output.Write([]byte(res))
+	}
 }
 
 func (l *Logger) Debug(args ...any) {
