@@ -95,6 +95,9 @@ type Logger struct {
 	secondOutput         io.Writer
 	secondOutputMinLevel VerboseLevel
 
+	file      *os.File
+	flushFile bool
+
 	levelColors []Color
 }
 
@@ -179,6 +182,8 @@ func (l *Logger) NewLogger(name string, options ...Option) *Logger {
 		output:               l.output,
 		secondOutput:         l.secondOutput,
 		secondOutputMinLevel: l.secondOutputMinLevel,
+		file:                 l.file,
+		flushFile:            l.flushFile,
 	}
 	copy(newl.levelColors, l.levelColors)
 	for _, option := range options {
@@ -263,6 +268,22 @@ func (l *Logger) print(level VerboseLevel, doNewLine bool, args ...any) {
 	} else {
 		l.output.Write([]byte(res))
 	}
+
+	if l.file != nil {
+		l.file.WriteString(res)
+		if l.flushFile {
+			l.file.Sync()
+		}
+	}
+}
+
+func (l *Logger) CloseFile() error {
+	if l.file != nil {
+		err := l.file.Close()
+		l.file = nil
+		return err
+	}
+	return nil
 }
 
 func (l *Logger) Debug(args ...any) {

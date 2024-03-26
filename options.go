@@ -1,6 +1,9 @@
 package yalog
 
-import "io"
+import (
+	"io"
+	"os"
+)
 
 type Option func(*Logger)
 
@@ -83,5 +86,16 @@ func WithSecondOutput(w io.Writer, level VerboseLevel) Option {
 	return func(l *Logger) {
 		l.secondOutput = w
 		l.secondOutputMinLevel = level
+	}
+}
+
+// WithWriteToFile
+// writes the log to a file
+// file: os.File to write to
+// flush: if true, the file will be flushed after every write
+func WithWriteToFile(file *os.File, flush bool) Option {
+	return func(l *Logger) {
+		l.file = file
+		l.flushFile = flush
 	}
 }
