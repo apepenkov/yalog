@@ -241,9 +241,6 @@ func (l *Logger) getLevel(level VerboseLevel) string {
 }
 
 func (l *Logger) print(level VerboseLevel, doNewLine bool, args ...any) {
-	if level < l.verboseLevel {
-		return
-	}
 	name := l.getTreeName()
 	timeStr := l.getDateTime()
 	levelStr := l.getLevel(level)
@@ -265,7 +262,7 @@ func (l *Logger) print(level VerboseLevel, doNewLine bool, args ...any) {
 
 	if l.secondOutput != nil && level >= l.secondOutputMinLevel {
 		l.secondOutput.Write([]byte(res))
-	} else {
+	} else if level >= l.verboseLevel {
 		l.output.Write([]byte(res))
 	}
 
